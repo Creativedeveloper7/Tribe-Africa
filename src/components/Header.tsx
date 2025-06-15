@@ -25,30 +25,30 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
 
   return (
     <header className="bg-sandstone-500/95 dark:bg-earth-900/95 backdrop-blur-md shadow-lg sticky top-0 z-40 border-b border-primary-200 dark:border-earth-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 flex items-center space-x-2">
+          <Link to="/" className="flex-shrink-0 flex items-center">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              className="w-24 sm:w-32"
             >
               <img
                 src={logo}
                 alt="Tribe Africa Logo"
-                className="h-10 w-auto object-contain"
-                style={{ maxWidth: '120px' }}
+                className="w-full h-auto object-contain"
               />
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-6 lg:space-x-8">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 font-sans font-medium transition-colors duration-200"
+                className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 font-sans font-medium transition-colors duration-200 whitespace-nowrap"
               >
                 <motion.span
                   className="block"
@@ -62,12 +62,11 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
             <ThemeToggle />
             
             <motion.button
               className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <Search className="h-5 w-5" />
@@ -75,7 +74,6 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
             
             <motion.button
               className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <User className="h-5 w-5" />
@@ -83,7 +81,6 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
 
             <motion.button
               className="text-charcoal-800 dark:text-sandstone-300 hover:text-secondary-600 dark:hover:text-secondary-400 transition-colors"
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <Heart className="h-5 w-5" />
@@ -92,58 +89,72 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
             <motion.button
               onClick={onCartOpen}
               className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
             >
               <ShoppingBag className="h-5 w-5" />
               {getTotalItems() > 0 && (
-                <motion.span
-                  className="absolute -top-2 -right-2 bg-secondary-500 text-sandstone-100 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                >
+                <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {getTotalItems()}
-                </motion.span>
+                </span>
               )}
             </motion.button>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center space-x-4">
             <ThemeToggle />
+            <motion.button
+              onClick={onCartOpen}
+              className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              whileTap={{ scale: 0.95 }}
+            >
+              <ShoppingBag className="h-5 w-5" />
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalItems()}
+                </span>
+              )}
+            </motion.button>
+
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
               whileTap={{ scale: 0.95 }}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="md:hidden bg-sandstone-400 dark:bg-earth-800 border-t border-primary-200 dark:border-earth-700"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            className="md:hidden bg-sandstone-100 dark:bg-earth-900 border-t border-primary-200 dark:border-earth-700"
           >
             <div className="px-4 pt-2 pb-3 space-y-1">
               {menuItems.map((item) => (
-                <motion.a
+                <Link
                   key={item.name}
-                  href={item.path}
+                  to={item.path}
                   className="block px-3 py-2 text-base font-medium text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-100 dark:hover:bg-earth-700 rounded-md transition-colors duration-200"
-                  whileHover={{ x: 4 }}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.name}
-                </motion.a>
+                  <motion.span
+                    className="block"
+                    whileHover={{ x: 4 }}
+                  >
+                    {item.name}
+                  </motion.span>
+                </Link>
               ))}
               
               <div className="flex items-center justify-center space-x-6 pt-4 border-t border-primary-200 dark:border-earth-700">
@@ -166,22 +177,6 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Heart className="h-5 w-5" />
-                </motion.button>
-
-                <motion.button
-                  onClick={() => {
-                    onCartOpen();
-                    setIsMenuOpen(false);
-                  }}
-                  className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ShoppingBag className="h-5 w-5" />
-                  {getTotalItems() > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-secondary-500 text-sandstone-100 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                      {getTotalItems()}
-                    </span>
-                  )}
                 </motion.button>
               </div>
             </div>
