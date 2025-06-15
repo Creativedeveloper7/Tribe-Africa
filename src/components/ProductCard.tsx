@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ShoppingBag, Eye, Star } from 'lucide-react';
 import { Product } from '../types';
-import { useCart } from '../hooks/useCart';
+import { useCart } from '../contexts/CartContext';
+import { ProductOrder } from '../types/order';
 
 interface ProductCardProps {
   product: Product;
@@ -14,9 +15,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { addToCart } = useCart();
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    addToCart(product, product.sizes_available[0], product.colors_available[0], 1);
+  const handleAddToCart = () => {
+    const order: ProductOrder = {
+      product,
+      size: product.sizes_available[0],
+      color: product.colors_available[0],
+      quantity: 1
+    };
+    addToCart(order);
   };
 
   const currentPrice = product.is_on_offer ? product.offer_price! : product.price;

@@ -5,6 +5,7 @@ import LoadingScreen from './components/LoadingScreen';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
+import { CartProvider } from './contexts/CartContext';
 
 // Pages
 import HomePage from './pages/HomePage.tsx';
@@ -62,7 +63,7 @@ const StitchingEffect: React.FC = () => {
   );
 };
 
-function App() {
+const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showStitchingEffect, setShowStitchingEffect] = useState(false);
@@ -92,38 +93,40 @@ function App() {
 
   return (
     <Router>
-      <div className="scroll-smooth min-h-screen bg-sandstone-100 dark:bg-charcoal-900 transition-colors duration-300">
-        <AnimatePresence>
-          {showStitchingEffect && <StitchingEffect />}
-        </AnimatePresence>
+      <CartProvider>
+        <div className="scroll-smooth min-h-screen bg-sandstone-100 dark:bg-charcoal-900 transition-colors duration-300">
+          <AnimatePresence>
+            {showStitchingEffect && <StitchingEffect />}
+          </AnimatePresence>
 
-        <Header onCartOpen={() => setIsCartOpen(true)} />
-        
-        <main className="pt-16">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/shop" element={<ShopPage />} />
-            <Route path="/product/:id" element={<ProductDetailsPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </main>
+          <Header onCartOpen={() => setIsCartOpen(true)} />
+          
+          <main className="pt-16">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/shop" element={<ShopPage />} />
+              <Route path="/product/:id" element={<ProductDetailsPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/account" element={<AccountPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </main>
 
-        <Footer />
+          <Footer />
 
-        <CartSidebar
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-        />
-      </div>
+          <CartSidebar
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+          />
+        </div>
+      </CartProvider>
     </Router>
   );
-}
+};
 
 export default App;

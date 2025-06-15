@@ -1,7 +1,11 @@
-import { CONTACT_INFO } from '../constants/contact';
-import { GallerySelection } from '../types/gallery';
+import { ProductOrder, DesignOrder } from '../types/order';
 
-interface ProductOrder {
+const CONTACT_INFO = {
+  whatsapp: '254700000000', // Replace with actual WhatsApp number
+  businessName: 'Tribe Africa'
+};
+
+interface OrderItem {
   name: string;
   size?: string;
   color?: string;
@@ -9,57 +13,91 @@ interface ProductOrder {
   price: number;
 }
 
-interface DesignOrder extends GallerySelection {
-  size?: string;
-  color?: string;
-  quantity: number;
-}
-
-export const generateConsultationLink = (message: string) => {
-  const { number } = CONTACT_INFO.whatsapp;
-  const fullMessage = `Hi Tribe Africa! 🌍\nHope you're doing great!\n\n${message}\n\nLooking forward to hearing from you! 😊`;
-  return `https://wa.me/${number}?text=${encodeURIComponent(fullMessage)}`;
+const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-KE', {
+    style: 'currency',
+    currency: 'KES',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(amount);
 };
 
-export const generateWhatsAppLink = (orderDetails: ProductOrder | ProductOrder[] | DesignOrder) => {
-  const { number, message } = CONTACT_INFO.whatsapp;
-  
-  let orderText = '';
-  
-  if ('design' in orderDetails) {
-    // Design order with fabric
-    const { fabricName, fabricPrice, design, totalPrice, size, color, quantity } = orderDetails;
-    const designDiscount = design.basePrice * 0.20; // 20% discount
-    const discountedDesignPrice = design.basePrice - designDiscount;
+const formatOrderItem = (item: OrderItem): string => {
+  const details = [
+    `Product: ${item.name}`,
+    item.size && `Size: ${item.size}`,
+    item.color && `Color: ${item.color}`,
+    `Quantity: ${item.quantity}`,
+    `Price: ${formatCurrency(item.price)}`
+  ].filter(Boolean).join('\n');
 
-    orderText = `🧵 Fabric Order with Design\n\n` +
-      `👕 Fabric Details:\n` +
-      `• Name: ${fabricName}\n` +
-      `• Price: KES ${fabricPrice.toLocaleString()}\n\n` +
-      `✂️ Design Details:\n` +
-      `• Style: ${design.name}\n` +
-      `• Base Price: KES ${design.basePrice.toLocaleString()}\n` +
-      `• Discount: -20% (KES ${designDiscount.toLocaleString()})\n` +
-      `• Final Design Price: KES ${discountedDesignPrice.toLocaleString()}\n` +
-      `${size ? `📏 Size: ${size}\n` : ''}` +
-      `${color ? `🎨 Color: ${color}\n` : ''}` +
-      `🔢 Quantity: ${quantity}\n\n` +
-      `💰 Total Price: KES ${totalPrice.toLocaleString()}`;
-  } else if (Array.isArray(orderDetails)) {
-    // Multiple products (cart)
-    orderText = orderDetails.map(item => 
-      `• ${item.name}${item.size ? ` (${item.size})` : ''}${item.color ? `, ${item.color}` : ''} x${item.quantity} - KES ${(item.price * item.quantity).toLocaleString()}`
-    ).join('\n');
+  return details;
+};
+
+const generateOrderMessage = (items: OrderItem[]): string => {
+  const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  const message = [
+    `Hi ${CONTACT_INFO.businessName}! 🌍`,
+    'Hope you\'re doing great!',
+    '',
+    'I\'d like to place an order:',
+    '',
+    ...items.map(item => formatOrderItem(item)),
+    '',
+    `Total: ${formatCurrency(total)}`,
+    '',
+    'Looking forward to hearing from you! 😊'
+  ].join('\n');
+
+  return message;
+};
+
+export const generateWhatsAppLink = (order: ProductOrder | DesignOrder | ProductOrder[]): string => {
+  let items: OrderItem[] = [];
+
+  if (Array.isArray(order)) {
+    items = order.map(item => ({
+      name: item.product.name,
+      size: item.size,
+      color: item.color,
+      quantity: item.quantity,
+      price: item.product.price
+    }));
+  } else if ('product' in order) {
+    items = [{
+      name: order.product.name,
+      size: order.size,
+      color: order.color,
+      quantity: order.quantity,
+      price: order.product.price
+    }];
   } else {
-    // Single product
-    const item = orderDetails;
-    orderText = `🧵 Product: ${item.name}\n` +
-      `${item.size ? `📏 Size: ${item.size}\n` : ''}` +
-      `${item.color ? `🎨 Color: ${item.color}\n` : ''}` +
-      `🔢 Quantity: ${item.quantity}\n` +
-      `💰 Price: KES ${(item.price * item.quantity).toLocaleString()}`;
+    items = [{
+      name: order.design.name,
+      size: order.size,
+      color: order.color,
+      quantity: order.quantity,
+      price: order.design.price
+    }];
   }
 
-  const fullMessage = message.prefix + orderText + message.suffix;
-  return `https://wa.me/${number}?text=${encodeURIComponent(fullMessage)}`;
+  const message = generateOrderMessage(items);
+  const encodedMessage = encodeURIComponent(message);
+  
+  return `https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodedMessage}`;
+};
+
+export const generateConsultationLink = (message: string): string => {
+  const fullMessage = [
+    `Hi ${CONTACT_INFO.businessName}! 🌍`,
+    'Hope you\'re doing great!',
+    '',
+    message,
+    '',
+    'Looking forward to hearing from you! 😊'
+  ].join('\n');
+
+  const encodedMessage = encodeURIComponent(fullMessage);
+  return `https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodedMessage}`;
 }; 

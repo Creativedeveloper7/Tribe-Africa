@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingBag, Heart, Star, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '../types';
-import { useCart } from '../hooks/useCart';
+import { useCart } from '../contexts/CartContext';
 import { generateWhatsAppLink } from '../utils/whatsapp';
+import { ProductOrder } from '../types/order';
 import GalleryButton from './GalleryButton';
 
 interface ProductModalProps {
-  product: Product | null;
+  product: Product;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -31,19 +32,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
       alert('Please select size and color');
       return;
     }
-    addToCart(product, selectedSize, selectedColor, quantity);
+    const order: ProductOrder = {
+      product,
+      size: selectedSize,
+      color: selectedColor,
+      quantity
+    };
+    addToCart(order);
     onClose();
   };
 
   const handleWhatsAppRedirect = () => {
-    const orderDetails = {
-      name: product.name,
+    const order: ProductOrder = {
+      product,
       size: selectedSize,
       color: selectedColor,
-      quantity: quantity,
-      price: currentPrice
+      quantity
     };
-    window.open(generateWhatsAppLink(orderDetails), '_blank');
+    window.open(generateWhatsAppLink(order), '_blank');
   };
 
   const nextImage = () => {

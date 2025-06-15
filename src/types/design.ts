@@ -1,9 +1,16 @@
 export interface Design {
   id: string;
   name: string;
-  image: string;
-  price: number;
-  category: 'dress' | 'coat' | 'custom';
+  description: string;
+  basePrice: number;
+  images: string[];
+  category: string;
+  sizes?: string[];
+  colors?: string[];
+  available: boolean;
+  featured?: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface DesignSelection {
