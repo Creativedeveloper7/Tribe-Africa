@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DesignSelectionModal from '../components/DesignSelectionModal';
-import OrderSummary from '../components/OrderSummary';
+import { OrderSummary } from '../components/OrderSummary';
 import { Design, DesignSelection } from '../types/design';
 
 const ProductDetailsPage: React.FC = () => {
