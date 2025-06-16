@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle } from 'lucide-react';
 import { GallerySelection } from '../types/gallery';
-import { generateWhatsAppLink } from '../utils/whatsapp';
+import { CONTACT_INFO } from '../constants/contact';
+
+const DISCOUNTED_FABRIC_PRICE = 1999; // Fixed discounted fabric price
+const ORIGINAL_FABRIC_PRICE = 3000; // Original fabric price
+const FABRIC_DISCOUNT = ORIGINAL_FABRIC_PRICE - DISCOUNTED_FABRIC_PRICE; // Discount amount
 
 interface DesignOrderSummaryProps {
   selection: GallerySelection;
@@ -14,18 +18,39 @@ const DesignOrderSummary: React.FC<DesignOrderSummaryProps> = ({ selection, onCl
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-  const { fabricName, fabricPrice, design, totalPrice } = selection;
+  const { fabricName, design } = selection;
   const designDiscount = design.basePrice * 0.20;
   const discountedDesignPrice = design.basePrice - designDiscount;
+  const finalTotalPrice = DISCOUNTED_FABRIC_PRICE + discountedDesignPrice;
 
   const handleWhatsAppRedirect = () => {
-    const orderDetails = {
-      ...selection,
-      size: selectedSize,
-      color: selectedColor,
-      quantity
-    };
-    window.open(generateWhatsAppLink(orderDetails), '_blank');
+    const message = `Hi ${CONTACT_INFO.businessName}!  
+Hope you're doing great!
+I'd love to complete my order for:
+
+  Fabric Order with Design
+
+  Fabric Details:
+• Name: ${fabricName}
+• Base Price: KES ${ORIGINAL_FABRIC_PRICE.toLocaleString()}
+• Discount: -${Math.round((FABRIC_DISCOUNT / ORIGINAL_FABRIC_PRICE) * 100)}% (KES ${FABRIC_DISCOUNT.toLocaleString()})
+• Final Fabric Price: KES ${DISCOUNTED_FABRIC_PRICE.toLocaleString()}
+
+  Design Details:
+• Style: ${design.name}
+• Base Price: KES ${design.basePrice.toLocaleString()}
+• Discount: -20% (KES ${designDiscount.toLocaleString()})
+• Final Design Price: KES ${discountedDesignPrice.toLocaleString()}
+  Size: ${selectedSize}
+  Color: ${selectedColor}
+  Quantity: ${quantity}
+
+  Total Price: KES ${(finalTotalPrice * quantity).toLocaleString()}
+
+Kindly guide me on how to proceed — can't wait to rock this look!`;
+
+    const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsapp.number}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -65,7 +90,11 @@ const DesignOrderSummary: React.FC<DesignOrderSummaryProps> = ({ selection, onCl
                 <h3 className="font-semibold text-sm mb-2 text-charcoal-800 dark:text-sandstone-100">Fabric</h3>
                 <div className="text-sm space-y-1 text-charcoal-700 dark:text-sandstone-200">
                   <p><span className="font-medium">Name:</span> {fabricName}</p>
-                  <p><span className="font-medium">Price:</span> KES {fabricPrice.toLocaleString()}</p>
+                  <p><span className="font-medium">Base Price:</span> KES {ORIGINAL_FABRIC_PRICE.toLocaleString()}</p>
+                  <p className="text-secondary-600 dark:text-secondary-400">
+                    <span className="font-medium">Discount:</span> -${Math.round((FABRIC_DISCOUNT / ORIGINAL_FABRIC_PRICE) * 100)}% (KES {FABRIC_DISCOUNT.toLocaleString()})
+                  </p>
+                  <p><span className="font-medium">Final:</span> KES {DISCOUNTED_FABRIC_PRICE.toLocaleString()}</p>
                 </div>
               </div>
               <div className="bg-sandstone-200 dark:bg-earth-700 rounded-lg p-3">
@@ -73,7 +102,7 @@ const DesignOrderSummary: React.FC<DesignOrderSummaryProps> = ({ selection, onCl
                 <div className="text-sm space-y-1 text-charcoal-700 dark:text-sandstone-200">
                   <p><span className="font-medium">Style:</span> {design.name}</p>
                   <p><span className="font-medium">Base:</span> KES {design.basePrice.toLocaleString()}</p>
-                  <p className="text-secondary-600 dark:text-secondary-400"><span className="font-medium">Discount:</span> -20%</p>
+                  <p className="text-secondary-600 dark:text-secondary-400"><span className="font-medium">Discount:</span> -20% (KES {designDiscount.toLocaleString()})</p>
                   <p><span className="font-medium">Final:</span> KES {discountedDesignPrice.toLocaleString()}</p>
                 </div>
               </div>
@@ -152,7 +181,7 @@ const DesignOrderSummary: React.FC<DesignOrderSummaryProps> = ({ selection, onCl
               <div className="flex justify-between items-center">
                 <span className="font-semibold text-charcoal-800 dark:text-sandstone-100">Total Price</span>
                 <span className="font-bold text-primary-600 dark:text-primary-400">
-                  KES {(totalPrice * quantity).toLocaleString()}
+                  KES {(finalTotalPrice * quantity).toLocaleString()}
                 </span>
               </div>
             </div>

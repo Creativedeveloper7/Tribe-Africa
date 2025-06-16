@@ -1,4 +1,5 @@
 export const CONTACT_INFO = {
+  businessName: 'Tribe Africa',
   whatsapp: {
     number: '254727399983',
     formattedNumber: '+254 727 399 983',

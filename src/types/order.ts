@@ -1,5 +1,5 @@
 import { Product } from './index';
-import { Design } from './design';
+import { Design } from './gallery';
 
 export interface ProductOrder {
   product: Product;
