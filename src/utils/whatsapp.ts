@@ -1,7 +1,7 @@
 import { ProductOrder, DesignOrder } from '../types/order';
 
 const CONTACT_INFO = {
-  whatsapp: '254700000000', // Replace with actual WhatsApp number
+  whatsapp: '254727399983', // WhatsApp number for Tribe Africa
   businessName: 'Tribe Africa'
 };
 

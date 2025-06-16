@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import { DesignSelection } from '../types/design';
+import { CONTACT_INFO } from '../constants/contact';
 
 interface OrderSummaryProps {
   selection: DesignSelection;
@@ -24,7 +25,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ selection, onClose }) => {
       `💰 Price: ₦${totalPrice.toLocaleString()}%0A%0A` +
       `Kindly guide me on how to proceed — can't wait to rock this look! 😄`;
 
-    return `https://wa.me/254727399983?text=${message}`;
+    return `https://wa.me/${CONTACT_INFO.whatsapp.number}?text=${message}`;
   };
 
   return (
