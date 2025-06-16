@@ -13,7 +13,7 @@ interface OrderItem {
   price: number;
 }
 
-const formatCurrency = (amount: number): string => {
+export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-KE', {
     style: 'currency',
     currency: 'KES',
@@ -78,7 +78,7 @@ export const generateWhatsAppLink = (order: ProductOrder | DesignOrder | Product
       size: order.size,
       color: order.color,
       quantity: order.quantity,
-      price: order.design.price
+      price: order.design.basePrice
     }];
   }
 
