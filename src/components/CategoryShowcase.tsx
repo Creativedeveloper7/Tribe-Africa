@@ -1,40 +1,86 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { compressWithPreset, formatFileSize } from '../utils/imageCompression';
 
 const categories = [
   {
     id: 'women',
     name: 'Women',
     description: 'Elegant and contemporary designs for the modern woman',
-    image: '/images/categories/women.jpg',
+    image: '/gallery/tausi Patch Maxi.png',
     link: '/shop?category=women'
   },
   {
     id: 'men',
     name: 'Men',
     description: 'Sophisticated styles that blend tradition with modern fashion',
-    image: '/images/categories/men.jpg',
+    image: '/gallery/male.png',
     link: '/shop?category=men'
   },
   {
     id: 'kids',
     name: 'Kids',
     description: 'Playful and comfortable designs for the little ones',
-    image: '/images/categories/kids.jpg',
+    image: '/gallery/kids.png',
     link: '/shop?category=kids'
   },
   {
     id: 'accessories',
     name: 'Accessories',
     description: 'Unique pieces to complement your African fashion',
-    image: '/images/categories/accessories.jpg',
+    image: '/gallery/accesories.png',
     link: '/shop?category=accessories'
   }
 ];
 
 const CategoryShowcase: React.FC = () => {
+  const [compressedImages, setCompressedImages] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const compressImages = async () => {
+      try {
+        const compressed: Record<string, string> = {};
+        
+        for (const category of categories) {
+          try {
+            // Fetch the image
+            const response = await fetch(category.image);
+            const blob = await response.blob();
+            const file = new File([blob], `${category.id}.png`, { type: 'image/png' });
+            
+            // Compress using GALLERY preset for category showcase
+            const result = await compressWithPreset(file, 'GALLERY');
+            
+            // Create object URL for the compressed image
+            const compressedUrl = URL.createObjectURL(result.file);
+            compressed[category.id] = compressedUrl;
+            
+            console.log(`Compressed ${category.name}: ${formatFileSize(result.originalSize)} → ${formatFileSize(result.compressedSize)} (${Math.round(result.compressionRatio * 100)}% reduction)`);
+          } catch (error) {
+            console.error(`Failed to compress ${category.name}:`, error);
+            // Fallback to original image if compression fails
+            compressed[category.id] = category.image;
+          }
+        }
+        
+        setCompressedImages(compressed);
+      } catch (error) {
+        console.error('Error compressing images:', error);
+        // Fallback to original images
+        const fallback: Record<string, string> = {};
+        categories.forEach(cat => fallback[cat.id] = cat.image);
+        setCompressedImages(fallback);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    compressImages();
+  }, []);
+
   return (
     <section className="w-full bg-sandstone-50 dark:bg-earth-900 py-12 sm:py-16 lg:py-20">
       <div className="w-full px-4 sm:px-6 lg:px-8">
@@ -75,11 +121,18 @@ const CategoryShowcase: React.FC = () => {
                 <Link to={category.link} className="block">
                   {/* Category Image */}
                   <div className="relative aspect-[3/4] overflow-hidden">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {isLoading ? (
+                      <div className="w-full h-full bg-gray-200 dark:bg-gray-700 animate-pulse flex items-center justify-center">
+                        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+                      </div>
+                    ) : (
+                      <img
+                        src={compressedImages[category.id] || category.image}
+                        alt={category.name}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   </div>
 

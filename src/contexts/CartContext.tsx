@@ -3,6 +3,8 @@ import { Product } from '../types';
 import { generateWhatsAppLink } from '../utils/whatsapp';
 import { ProductOrder } from '../types/order';
 
+const DISCOUNTED_FABRIC_PRICE = 1999; // Fixed discounted fabric price
+
 interface CartContextType {
   items: ProductOrder[];
   addToCart: (item: ProductOrder) => void;
@@ -89,10 +91,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getTotalPrice = () => {
-    return items.reduce(
-      (total, item) => total + (item.product.price * item.quantity),
-      0
-    );
+    return items.reduce((total, item) => {
+      // Apply discounted fabric price for fabric products
+      const priceToUse = (item.product.material === 'Fabric' || item.product.material === 'Cotton Blend') 
+        ? DISCOUNTED_FABRIC_PRICE 
+        : (item.product.is_on_offer ? item.product.offer_price! : item.product.price);
+      
+      return total + (priceToUse * item.quantity);
+    }, 0);
   };
 
   const checkout = () => {

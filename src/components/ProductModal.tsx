@@ -7,6 +7,8 @@ import { generateWhatsAppLink } from '../utils/whatsapp';
 import { ProductOrder } from '../types/order';
 import GalleryButton from './GalleryButton';
 
+const DISCOUNTED_FABRIC_PRICE = 1999; // Fixed discounted fabric price
+
 interface ProductModalProps {
   product: Product;
   isOpen: boolean;
@@ -22,10 +24,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
 
   if (!product) return null;
 
-  const currentPrice = product.is_on_offer ? product.offer_price! : product.price;
-  const discount = product.is_on_offer 
-    ? Math.round(((product.price - product.offer_price!) / product.price) * 100)
-    : 0;
+  const isFabricProduct = product.material === 'Fabric' || product.material === 'Cotton Blend';
+  const currentPrice = isFabricProduct ? DISCOUNTED_FABRIC_PRICE : (product.is_on_offer ? product.offer_price! : product.price);
+  const discount = isFabricProduct 
+    ? Math.round(((product.price - DISCOUNTED_FABRIC_PRICE) / product.price) * 100)
+    : (product.is_on_offer ? Math.round(((product.price - product.offer_price!) / product.price) * 100) : 0);
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
@@ -91,7 +94,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                   <X className="h-5 w-5" />
                 </button>
 
-                {product.is_on_offer && (
+                {(product.is_on_offer || isFabricProduct) && (
                   <div className="absolute top-4 left-4 z-10 bg-secondary-500 text-sandstone-100 px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                     -{discount}%
                   </div>
@@ -157,7 +160,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                     <span className="text-3xl font-display font-bold text-charcoal-900 dark:text-sandstone-200">
                       KES {currentPrice.toLocaleString()}
                     </span>
-                    {product.is_on_offer && (
+                    {(product.is_on_offer || isFabricProduct) && (
                       <span className="text-lg text-charcoal-500 dark:text-sandstone-500 line-through">
                         KES {product.price.toLocaleString()}
                       </span>

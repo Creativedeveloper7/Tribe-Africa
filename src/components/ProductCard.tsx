@@ -5,6 +5,8 @@ import { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
 import { ProductOrder } from '../types/order';
 
+const DISCOUNTED_FABRIC_PRICE = 1999; // Fixed discounted fabric price
+
 interface ProductCardProps {
   product: Product;
   onQuickView: (product: Product) => void;
@@ -25,10 +27,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
     addToCart(order);
   };
 
-  const currentPrice = product.is_on_offer ? product.offer_price! : product.price;
-  const discount = product.is_on_offer 
-    ? Math.round(((product.price - product.offer_price!) / product.price) * 100)
-    : 0;
+  const isFabricProduct = product.material === 'Fabric' || product.material === 'Cotton Blend';
+  const currentPrice = isFabricProduct ? DISCOUNTED_FABRIC_PRICE : (product.is_on_offer ? product.offer_price! : product.price);
+  const discount = isFabricProduct 
+    ? Math.round(((product.price - DISCOUNTED_FABRIC_PRICE) / product.price) * 100)
+    : (product.is_on_offer ? Math.round(((product.price - product.offer_price!) / product.price) * 100) : 0);
 
   return (
     <motion.div
@@ -73,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
 
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-col space-y-2">
-          {product.is_on_offer && (
+          {(product.is_on_offer || isFabricProduct) && (
             <span className="bg-secondary-500 text-sandstone-100 px-3 py-1 rounded-full text-sm font-body font-semibold shadow-lg">
               -{discount}%
             </span>
@@ -160,7 +163,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onQuickView }) => {
             <span className="text-xl font-display font-bold text-charcoal-900 dark:text-sandstone-200">
               KES {currentPrice.toLocaleString()}
             </span>
-            {product.is_on_offer && (
+            {(product.is_on_offer || isFabricProduct) && (
               <span className="text-sm text-charcoal-500 dark:text-sandstone-500 line-through font-body">
                 KES {product.price.toLocaleString()}
               </span>

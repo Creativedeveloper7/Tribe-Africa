@@ -86,35 +86,50 @@ const Header: React.FC<HeaderProps> = ({ onCartOpen }) => {
               <Heart className="h-5 w-5" />
             </motion.button>
 
+            {/* Cart - Link to full cart page */}
+            <Link to="/cart">
+              <motion.button
+                className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                whileTap={{ scale: 0.95 }}
+              >
+                <ShoppingBag className="h-5 w-5" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </motion.button>
+            </Link>
+
+            {/* Quick Cart Sidebar Button */}
             <motion.button
               onClick={onCartOpen}
-              className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+              className="text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors border-l border-gray-300 dark:border-earth-600 pl-4"
               whileTap={{ scale: 0.95 }}
+              title="Quick Cart View"
             >
-              <ShoppingBag className="h-5 w-5" />
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {getTotalItems()}
-                </span>
-              )}
+              <span className="text-sm font-medium">Quick View</span>
             </motion.button>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
             <ThemeToggle />
-            <motion.button
-              onClick={onCartOpen}
-              className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-              whileTap={{ scale: 0.95 }}
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {getTotalItems()}
-                </span>
-              )}
-            </motion.button>
+            
+            {/* Mobile Cart - Link to full cart page */}
+            <Link to="/cart">
+              <motion.button
+                className="relative text-charcoal-800 dark:text-sandstone-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                whileTap={{ scale: 0.95 }}
+              >
+                <ShoppingBag className="h-5 w-5" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary-600 text-sandstone-100 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </motion.button>
+            </Link>
 
             <motion.button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
