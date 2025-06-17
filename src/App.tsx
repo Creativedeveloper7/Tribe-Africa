@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import Header from './components/Header';
+import BannerManager from './components/BannerManager';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
 import { CartProvider } from './contexts/CartContext';
+import { BANNER_CAMPAIGNS, BANNER_CONFIG } from './constants/banners';
 
 // Pages
 import HomePage from './pages/HomePage.tsx';
@@ -67,6 +69,11 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showStitchingEffect, setShowStitchingEffect] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(BANNER_CONFIG.defaultVisible);
+
+  console.log('App render - isBannerVisible:', isBannerVisible);
+  console.log('BANNER_CONFIG:', BANNER_CONFIG);
+  console.log('BANNER_CAMPAIGNS:', BANNER_CAMPAIGNS);
 
   // Scroll effect handler with African-inspired stitching
   useEffect(() => {
@@ -100,6 +107,18 @@ const App: React.FC = () => {
           </AnimatePresence>
 
           <Header onCartOpen={() => setIsCartOpen(true)} />
+          
+          <AnimatePresence>
+            {isBannerVisible && (
+              <BannerManager 
+                banners={BANNER_CAMPAIGNS}
+                autoRotate={BANNER_CONFIG.autoRotate}
+                rotationInterval={BANNER_CONFIG.rotationInterval}
+                showNavigation={BANNER_CONFIG.showNavigation}
+                onClose={() => setIsBannerVisible(false)}
+              />
+            )}
+          </AnimatePresence>
           
           <main className="pt-16">
             <Routes>
